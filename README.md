@@ -28,3 +28,8 @@
 9. Собираем оценки от трех моделей и усредняем значения.
 10. Оформляем итоговый результат в Excel файл.
 
+### Диаграмма последовательности
+<img width="2442" height="1490" alt="estima-sequence-diagram" src="https://github.com/user-attachments/assets/bd3ef770-7729-43b0-936e-a6c40eb57beb" />
+
+### Блок схема
+<img src="estima-diagram.png" alt="estima-flowchart" />
