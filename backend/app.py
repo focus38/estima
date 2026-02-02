@@ -1,27 +1,24 @@
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI
 from openai import AsyncOpenAI
 from starlette.middleware.cors import CORSMiddleware
 
 from backend import config
-from backend.ai.workflow import build_estimator_graph
-from backend.service.job_manager import EstimatorJobManager
+from backend.utils.log_utils import configure_logger
 
 ai_client: AsyncOpenAI | None = None
-estimator_graph = None
-estimator_job_manager : EstimatorJobManager | None = None
+
+configure_logger(enable_json_logs=True)
+logger = structlog.stdlib.get_logger()
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     global ai_client
-    global estimator_graph
-    global estimator_job_manager
 
     try:
         ai_client = AsyncOpenAI(base_url=config.AI_PROXY_URL, api_key=config.AI_API_KEY)
-        estimator_graph = build_estimator_graph()
-        estimator_job_manager = EstimatorJobManager()
 
         from controller.estimator import estimator_router
 
@@ -29,8 +26,8 @@ async def lifespan(application: FastAPI):
         yield
     finally:
         await ai_client.close()
-        del estimator_graph, estimator_job_manager
-        print("Resources released.")
+        del ai_client
+        logger.info("Resources released.")
 
 app = FastAPI(lifespan=lifespan)
 
