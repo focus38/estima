@@ -1,20 +1,20 @@
 import asyncio
 import logging
-from typing import List
+from typing import List, Any, Dict
 
 from backend.ai.workflow_state import EstimationState
 from backend.models.errors import JobError
 from backend.models.job import EstimationStage
 from backend.models.project import ProjectTaskWithContext
-
+from backend.storage.vector_store import ChromaStore
 
 logger = logging.getLogger(__name__)
 
 async def retrieve(state: EstimationState) -> EstimationState:
     """
     Поиск контекста для задач. Добавление найденной информации об оценке задач в контекст для последующей оценке.
-    :param state: бегунок для workflow
-    :return: возвращает объект state, который будет использоваться на следующем этапе workflow.
+    :param state: Объект, связывающий узлы между собой.
+    :return: Возвращает объект state, который будет использоваться на следующем этапе workflow.
     """
     logger.info("Started searching context for tasks.")
     if state.progress_callback:
@@ -25,10 +25,22 @@ async def retrieve(state: EstimationState) -> EstimationState:
         return state
 
     try:
-        # TODO реализовать поиск в векторном хранилище по каждой задаче.
         tasks: List[ProjectTaskWithContext] = []
+        store = ChromaStore()
+
+        k = len(state.roles)
         for phase in state.phases:
-            tasks.extend(phase.build_tasks_with_context())
+            for t in phase.tasks:
+                tasks.append(ProjectTaskWithContext(
+                    phase_name=phase.name,
+                    task_name=t.name,
+                    context="")
+                )
+        queries: List[str] = [t.task_name for t in tasks]
+        documents = await store.query_batch(queries, k) # List[List[Dict]]
+        for i in range(len(documents)):
+            context = _build_context_str(documents[i])
+            tasks[i].context = context
 
         state.tasks_with_context = tasks
         logger.info("Finished searching context for tasks.")
@@ -36,3 +48,20 @@ async def retrieve(state: EstimationState) -> EstimationState:
     except Exception as ex:
         logger.error("Error while searching context for tasks.", exc_info=ex)
         raise JobError("retrieval", "Error while searching context for tasks.")
+
+def _build_context_str(documents: List[Dict[str, Any]]) -> str:
+    parts: List[str] = []
+    for doc in documents:
+        context = doc.get("document", "")
+        parts.append(context)
+        metadata = doc.get("metadata", {})
+        if metadata:
+            estimate = metadata.get("estimate", None)
+            if estimate:
+                parts.append(f"Оценка трудозатрат: {estimate}")
+            best_practice = metadata.get("best_practice", None)
+            if best_practice:
+                parts.append(f"Best practice: {best_practice}")
+        parts.append("")
+
+    return "\n".join(parts)

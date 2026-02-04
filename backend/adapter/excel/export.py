@@ -33,7 +33,13 @@ class ExcelExporter:
         # Формируем плоский список всех задач в порядке этапов
         all_tasks: List[ProjectTaskWithContext] = []
         for phase in phases:
-            all_tasks.extend(phase.build_tasks_with_context())
+            for t in phase.tasks:
+                item = ProjectTaskWithContext(
+                    phase_name=phase.name,
+                    task_name=t.name,
+                    context=""
+                )
+            all_tasks.append(item)
 
         # 1. Собираем данные по каждой модели
         model_results = {}

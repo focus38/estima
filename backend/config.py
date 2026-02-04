@@ -30,4 +30,4 @@ DEFAULT_ROLES = ["backend", "frontend", "QA", "analyst", "PM", "DevOps", "archit
 #DEFAULT_ESTIMATION_MODELS = ["openai/gpt-4.1-mini", "qwen/qwen3-max", "deepseek/deepseek-v3.2"]
 DEFAULT_ESTIMATION_MODELS = ["gpt-4.1-mini", "qwen3-max", "llama-4-scout"] # "gpt-5-mini"
 
-SIMILARITY_THRESHOLD = 0.3
+SIMILARITY_THRESHOLD = 0.68
