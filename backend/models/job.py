@@ -23,8 +23,8 @@ class EstimationStage(str, Enum):
             EstimationStage.EXTRACTION: 10,
             EstimationStage.SUMMARIZE: 25,
             EstimationStage.DECOMPOSITION: 45,
-            EstimationStage.RETRIEVAL: 65,
-            EstimationStage.ESTIMATION: 85,
+            EstimationStage.RETRIEVAL: 55,
+            EstimationStage.ESTIMATION: 65,
             EstimationStage.PREPARE_RESULT: 95,
             EstimationStage.DONE: 100,
             EstimationStage.FAILED: 100,
@@ -40,7 +40,4 @@ class JobInfo(BaseModel):
 
 class JobResult(BaseModel):
     job_id: UUID
-    summary: str
-    phases: list[dict]
-    estimates: list[dict]
-    excel_url: str
+    is_success: bool

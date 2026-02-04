@@ -65,11 +65,11 @@ document.getElementById('fileInput').addEventListener('change', (e) => {
     const errorElement = document.getElementById('fileError');
 
     if (file) {
-        const allowedExtensions = ['.txt', '.pdf', '.docx'];
+        const allowedExtensions = ['.txt', '.pdf', '.docx', '.md'];
         const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
         if (!allowedExtensions.includes(fileExtension)) {
-            errorElement.textContent = 'Неверный формат файла. Разрешены: txt, pdf, docx';
+            errorElement.textContent = 'Неверный формат файла. Разрешены: txt, pdf, docx, md';
             errorElement.style.display = 'block';
             e.target.value = '';
         } else {

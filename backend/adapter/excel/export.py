@@ -73,7 +73,7 @@ class ExcelExporter:
                     if t.phase_name == phase_name and t.task_name == task_name
                 ]
                 # TODO Округлить до большего целого числа
-                avg_val = round(sum(values) / len(values), 2)
+                avg_val = round(sum(values) / len(values))
                 avg_row[role] = avg_val
                 total_sum += avg_val
             avg_row["Итого"] = total_sum
