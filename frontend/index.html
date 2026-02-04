@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Оценка проекта</title>
+    <link rel="icon" href="/static/image/favicon.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <h1>Оценка проекта</h1>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="fileInput">Выберите файл (txt, pdf, docx):</label>
+                <input type="file" id="fileInput" accept=".txt,.pdf,.docx" required>
+                <div class="error" id="fileError"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Роли:</label>
+                <div class="roles-container" id="rolesContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Загрузка ролей...
+                    </div>
+                </div>
+                <div class="add-role">
+                    <input type="text" id="newRoleInput" placeholder="Добавить новую роль">
+                    <button type="button" id="addRoleBtn">Добавить</button>
+                </div>
+            </div>
+            <div class="submit-group">
+                <button type="submit" id="submitBtn">Отправить на оценку</button>
+            </div>
+        </form>
+
+        <div class="status-container" id="statusContainer">
+            <div class="status-header">Статус:</div>
+            <div class="status-text" id="statusText">Обработка...</div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div id="resultContainer"></div>
+        </div>
+    </div>
+    <script src="/static/js/index.js"></script>
+</body>
+</html>
