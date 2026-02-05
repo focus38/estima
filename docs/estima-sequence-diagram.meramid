@@ -1,0 +1,41 @@
+sequenceDiagram
+    participant User
+    participant UI as Web UI
+    participant Backend as Backend Service
+    participant LLM1 as LLM (Decomposition)
+    participant LLM2 as LLM (Summarization)
+    participant VectorDB as Vector DB (RAG)
+    participant LLM3 as LLM (Estimation 1)
+    participant LLM4 as LLM (Estimation 2)
+    participant LLM5 as LLM (Estimation 3)
+    participant Excel as Excel Exporter
+
+    User->>UI: Загружает файл + настройки
+    UI->>Backend: POST /upload → сохраняет файл
+    Backend->>Backend: Извлекает текст (PDF/TXT/DOCX/MD)
+
+    Backend->>LLM1: Запрос: извлечь этапы, задачи → JSON
+    LLM1-->>Backend: JSON: этапы → [задачи]
+    Backend->>Backend: Парсинг JSON → структура проекта
+
+    Backend->>LLM2: Запрос: краткое содержание ТЗ
+    LLM2-->>Backend: Текст summary
+
+    loop Для каждой задачи
+        Backend->>VectorDB: Поиск по эмбеддингу (RAG)
+        VectorDB-->>Backend: Доп. контекст (оценки, примеры)
+    end
+
+    Backend->>LLM3: Оценка (summary + этапы + задачи + роли + RAG)
+    Backend->>LLM4: Тот же запрос к другой модели
+    Backend->>LLM5: Тот же запрос к третьей модели
+
+    LLM3-->>Backend: Оценка #1 (часы/роли/этапы)
+    LLM4-->>Backend: Оценка #2
+    LLM5-->>Backend: Оценка #3
+
+    Backend->>Backend: Усреднение оценок → итоговая таблица
+    Backend->>Excel: Генерация Excel/CSV
+    Excel-->>Backend: Файл готов
+    Backend-->>UI: Ссылка на скачивание
+    UI-->>User: Показывает результат / позволяет скачать

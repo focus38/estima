@@ -15,6 +15,7 @@ async def estimate(state: EstimationState) -> EstimationState:
     if state.progress_callback:
         await asyncio.to_thread(state.progress_callback, state.job_id, EstimationStage.ESTIMATION, None)
 
+    state.current_model_index = state.current_model_index + 1 # Увеличиваем текущий индекс модели.
     if not state.roles:
         state.estimates = []
         return state
@@ -28,7 +29,6 @@ async def estimate(state: EstimationState) -> EstimationState:
 
     model_name = state.models[state.current_model_index]
     model_estimation = await _estimate_by_model(model_name, state)
-    state.current_model_index = state.current_model_index + 1
     state.estimates.append({
         model_name: model_estimation # TaskEstimation
     })
