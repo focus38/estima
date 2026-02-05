@@ -1,15 +1,14 @@
 import asyncio
-import logging
-from pathlib import Path
 
 from backend import config
 from backend.adapter.excel.export import ExcelExporter
 from backend.ai.workflow_state import EstimationState
 from backend.models.errors import JobError
 from backend.models.job import EstimationStage
+from backend.utils import log_utils
 
 
-logger = logging.getLogger(__name__)
+logger = log_utils.get_logger()
 
 async def prepare(state: EstimationState) -> EstimationState:
     logger.info("Started formalizing the estimation results.")

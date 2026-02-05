@@ -1,0 +1,23 @@
+volumes:
+  shared_data:
+    driver: local
+    driver_opts:
+      type: bind
+      o: bind
+      device: data
+
+services:
+  estima:
+    build: .
+    container_name: estima
+    environment:
+      - AI_API_KEY=${AI_API_KEY}
+      - AI_PROXY_URL=${AI_PROXY_URL}
+      - UPLOAD_DIR=${UPLOAD_DIR}
+      - RESULTS_DIR=${RESULTS_DIR}
+      - CHROMA_PERSIST_DIR=${CHROMA_PERSIST_DIR}
+      - ALLOWED_FILE_EXTENSIONS=${ALLOWED_FILE_EXTENSIONS}
+    ports:
+      - "8000:8000"
+    volumes:
+      - shared_data:/app/data

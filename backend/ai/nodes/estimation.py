@@ -1,40 +1,42 @@
 import asyncio
-import logging
 from typing import List
 
 from backend.ai import llm
 from backend.ai.workflow_state import EstimationState
 from backend.models.estimation import TaskEstimation
 from backend.models.job import EstimationStage
+from backend.utils import log_utils
 
 
-logger = logging.getLogger(__name__)
+logger = log_utils.get_logger()
 
 async def estimate(state: EstimationState) -> EstimationState:
     logger.info("Started estimating tasks.")
     if state.progress_callback:
         await asyncio.to_thread(state.progress_callback, state.job_id, EstimationStage.ESTIMATION, None)
 
-    state.current_model_index = state.current_model_index + 1 # Увеличиваем текущий индекс модели.
     if not state.roles:
         state.estimates = []
+        state.current_model_index = state.current_model_index + 1  # Увеличиваем текущий индекс модели.
         return state
     if not state.tasks_with_context:
         state.estimates = []
+        state.current_model_index = state.current_model_index + 1  # Увеличиваем текущий индекс модели.
         return state
     if not state.models:
         state.estimates = []
+        state.current_model_index = state.current_model_index + 1  # Увеличиваем текущий индекс модели.
         return state
-
 
     model_name = state.models[state.current_model_index]
     model_estimation = await _estimate_by_model(model_name, state)
+    state.current_model_index = state.current_model_index + 1 # Увеличиваем текущий индекс модели.
     state.estimates.append({
         model_name: model_estimation # TaskEstimation
     })
 
     if state.current_model_index == len(state.models):
-        logging.info("Finished estimating tasks.")
+        logger.info("Finished estimating tasks.")
 
     return state
 

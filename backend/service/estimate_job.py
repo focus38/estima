@@ -1,4 +1,3 @@
-import logging
 import uuid
 from typing import Dict, Optional
 from uuid import UUID
@@ -6,10 +5,12 @@ from uuid import UUID
 from backend.models.api import EstimationRequest
 from backend.models.job import JobInfo, EstimationStage, JobResult
 from backend.service.processing import process_job
+from backend.utils import log_utils
+
 
 _jobs: Dict[UUID, JobInfo] = {}
 _results: Dict[UUID, JobResult] = {}
-logger = logging.getLogger(__name__)
+logger = log_utils.get_logger()
 
 _test_job_id = uuid.UUID("0c849e85-8b41-49ff-b5d8-dc7ba85944ef")
 _results[_test_job_id] = JobResult(
@@ -30,7 +31,7 @@ async def start_estimate_job(job_id: UUID, file_path: str, settings: EstimationR
         _update_status(job_id, EstimationStage.DONE)
         logger.info(f"Finished estimate job: job_id={job_id}")
     except Exception as ex:
-        logger.error("Error while start estimate job.", exc_info=ex)
+        logger.exception("Error while start estimate job.")
         _update_status(job_id, EstimationStage.FAILED, str(ex))
 
 def get_status_estimate_job(job_id: UUID) -> Optional[JobInfo]:

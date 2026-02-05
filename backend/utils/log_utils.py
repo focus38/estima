@@ -1,6 +1,6 @@
 import logging
-
 import structlog
+from structlog import BoundLogger
 
 from backend import config
 
@@ -49,3 +49,6 @@ def _configure_logging(shared_processors, logs_render):
     root_logger.handlers.clear()
     root_logger.addHandler(handler)
     root_logger.setLevel(config.LOG_LEVEL)
+
+def get_logger() -> BoundLogger:
+    return structlog.stdlib.get_logger()

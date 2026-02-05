@@ -1,14 +1,14 @@
 import asyncio
-import logging
 from pathlib import Path
 
 from backend.adapter.reader.factory import reader_factory
 from backend.ai.workflow_state import EstimationState
 from backend.models.errors import JobError
 from backend.models.job import EstimationStage
+from backend.utils import log_utils
 
 
-logger = logging.getLogger(__name__)
+logger = log_utils.get_logger()
 
 async def extract_document_content(state: EstimationState) -> EstimationState:
     logger.info("Started reading the content of the document.")

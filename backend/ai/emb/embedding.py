@@ -1,9 +1,9 @@
-import logging
 from typing import List
 
 from openai import AsyncOpenAI
 
 from backend import config
+from backend.utils import log_utils
 
 
 class EmbeddingClient:
@@ -12,7 +12,7 @@ class EmbeddingClient:
     """
     def __init__(self, ai_client: AsyncOpenAI):
         self.ai_client = ai_client
-        self.logger = logging.getLogger(__name__)
+        self.logger = log_utils.get_logger()
 
     async def get_embedding(self, text: str) -> List[float]:
         """

@@ -1,5 +1,4 @@
 import asyncio
-import logging
 from typing import List, Any, Dict
 
 from backend.ai.workflow_state import EstimationState
@@ -7,8 +6,10 @@ from backend.models.errors import JobError
 from backend.models.job import EstimationStage
 from backend.models.project import ProjectTaskWithContext
 from backend.storage.vector_store import ChromaStore
+from backend.utils import log_utils
 
-logger = logging.getLogger(__name__)
+
+logger = log_utils.get_logger()
 
 async def retrieve(state: EstimationState) -> EstimationState:
     """
