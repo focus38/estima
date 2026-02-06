@@ -8,6 +8,7 @@ from starlette.responses import FileResponse
 from starlette.staticfiles import StaticFiles
 
 from backend import config
+from backend.middleware.auth import BasicAuthMiddleware
 from backend.utils.log_utils import configure_logger, get_logger
 
 ai_client: AsyncOpenAI | None = None
@@ -40,7 +41,8 @@ async def lifespan(application: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.logger = logger
-
+# Добавляем middleware для аутентификации
+app.add_middleware(BasicAuthMiddleware)
 # Монтируем статические файлы
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
@@ -48,13 +50,3 @@ app.mount("/static", StaticFiles(directory="frontend"), name="static")
 @app.get("/")
 async def read_index():
     return FileResponse("frontend/index.html")
-
-# Эти настройки нужные для локального тестирования
-origins = ["http://localhost:8080"]
-app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"]
-    )

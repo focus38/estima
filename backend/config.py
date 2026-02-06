@@ -31,3 +31,7 @@ DEFAULT_ROLES = ["backend", "frontend", "QA", "analyst", "PM", "DevOps", "archit
 DEFAULT_ESTIMATION_MODELS = ["gpt-4o-mini", "qwen3-max", "gpt-5-mini"]
 
 SIMILARITY_THRESHOLD = 0.68
+USERS = {
+    "admin": "zT181UcbX0Ta",
+    "user": "de917Gtlj6mE"
+}
