@@ -39,13 +39,18 @@ class ExcelExporter:
                     task_name=t.name,
                     context=""
                 )
-            all_tasks.append(item)
+                all_tasks.append(item)
 
         # 1. Собираем данные по каждой модели
+        model_info = {}
         model_results = {}
         for estimate_dict in estimates:
             model_name, tasks_estimations = next(iter(estimate_dict.items()))
             rows = []
+            has_estimations = len(tasks_estimations) > 0
+            model_info[model_name] = {
+                "has_estimations": has_estimations
+            }
             for i, task in enumerate(all_tasks):
                 roles_estimates = self.find_task_by_index(i, tasks_estimations)
                 row: Dict[str, Any] = {
@@ -78,7 +83,6 @@ class ExcelExporter:
                     for i, (t) in enumerate(all_tasks)
                     if t.phase_name == phase_name and t.task_name == task_name
                 ]
-                # TODO Округлить до большего целого числа
                 avg_val = round(sum(values) / len(values))
                 avg_row[role] = avg_val
                 total_sum += avg_val

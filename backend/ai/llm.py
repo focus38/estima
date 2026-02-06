@@ -100,10 +100,12 @@ async def estimate(
 ) -> List[TaskEstimation]:
     roles_str = _create_role_description(roles)
     tasks_str = _create_task_description(tasks)
+    context_str = _create_context_description(tasks)
     user_prompt = prompts.ESTIMATE_USER_PROMPT.format(
         document_summary=summary,
         roles=roles_str,
-        tasks=tasks_str
+        tasks=tasks_str,
+        task_context=context_str
     )
     messages: List[ChatCompletionMessageParam] = [
         ChatCompletionSystemMessageParam(
@@ -168,16 +170,20 @@ def _create_role_description(roles: List[str]) -> str:
     return "\n".join(lines)
 
 def _create_task_description(tasks: List[ProjectTaskWithContext]) -> str:
-    lines = ["Перечень задач для оценки (сохраняй порядок и нумерацию при ответе):"]
+    lines = []
     for idx, task in enumerate(tasks, start=1):
         phase_name = task.phase_name.strip() if task.phase_name else ""
         task_name = task.task_name.strip() if task.task_name else ""
-        context = task.context.strip() if task.context else ""
-
         lines.append(f"\n{idx}. Этап: {phase_name}")
-        lines.append(f"   Задача: {task_name}")
+        lines.append(f" - {task_name}")
+    return "\n".join(lines)
+
+def _create_context_description(tasks: List[ProjectTaskWithContext]) -> str:
+    lines = []
+    for idx, task in enumerate(tasks, start=1):
+        context = task.context.strip() if task.context else ""
         if context:
-            lines.append(f"   Контекст: {context}")
+            lines.append(f"{idx}.\n{context}")
     return "\n".join(lines)
 
 def _validate_llm_response(stage: str, response: ChatCompletion) -> None:
