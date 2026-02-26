@@ -52,7 +52,7 @@ class ExcelExporter:
                 "has_estimations": has_estimations
             }
             for i, task in enumerate(all_tasks):
-                roles_estimates = self.find_task_by_index(i, tasks_estimations)
+                roles_estimates = self.find_task_by_index(i+1, tasks_estimations)
                 row: Dict[str, Any] = {
                     "Название этапа": task.phase_name,
                     "Название задачи": task.task_name,
